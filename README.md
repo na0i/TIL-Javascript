@@ -75,4 +75,5 @@ Javascript를 알고리즘 주언어로 사용할 수 있을 정도로 학습하
 |            | 3-2         | 함수 활용 실습(1/2) | 1]함수.md, 1.calculator-exam |
 |            | 3-3         | 함수 활용 실습(2/2) | 1.calculator-exam |
 |            | 4-1         | Array | |
-|            | 4-2         | 배열 실습(1/2) | |
+|            | 4-2         | 배열 실습(1/2) | 2.calculator-template |
+| | 4-3 | 배열 실습(2/2) | 2.calculator-template |
