@@ -91,6 +91,52 @@
 
 <br>
 
+#### 참조에 의한 전달과 외부 상태의 변경
+
+- 원시값은 값에 의한 전달, 객체는 참조에 의한 전달 방식으로 동작
+
+- 매개변수 또한 타입에 따라 값에 의한 전달, 참조에 의한 전달 방식을 그대로 따름
+
+- 원시값은 immutable value이므로 직접 변경하는 것이 아닌 재할당을 통해 할당된 원시 값을 새로운 원시 값으로 교체 → 원본 훼손 X
+
+- 객체는 mutable value이므로 할당된 객체를 직접 변경
+
+- 예시
+
+  ```javascript
+  document.getElementById('mybutton').addEventListener('click', function(){
+      console.log('button clicked!')
+  });
+  
+  setTimeout(function(){
+      console.log('1초 경과');
+  }, 1000)
+  
+  var res = [1, 2, 3].map(function(item) {
+      return item * 2;
+  })
+  
+  var res = [1, 2, 3].filter(function(item) {
+      return item % 2;
+  })
+  ```
+
+<br>
+
+#### 콜백함수
+
+- 자바스크립트의 함수는 일급 객체이므로 함수의 매개변수를 통해 함수를 전달 가능
+
+- 함수의 매개변수를 통해 다른 함수의 내부로 전달 되는 함수를 콜백함수라고 한다.
+
+- 매개변수를 통해 함수의 외부에서 콜백함수를 전달받은 함수를 고차함수 한다.
+
+  
+
+  
+
+<br>
+
 #### 일급 객체
 
 - 값의 성질을 갖는 객체
