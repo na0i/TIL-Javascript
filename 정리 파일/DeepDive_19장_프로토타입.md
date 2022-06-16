@@ -256,7 +256,7 @@
 
   - 객체 리터럴의 평가
 
-    - ![image-20220616221654739](C:\Users\na_0_i\AppData\Roaming\Typora\typora-user-images\image-20220616221654739.png)
+    - ![image](https://user-images.githubusercontent.com/77482972/174081655-c26e72c4-0e89-4d24-aa29-1448e9f1cee8.png)
     - OrdinaryObjectCreate를 호출하여 빈 객체를 생성하고 프로퍼티를 추가하도록 정의됨
 
   - 즉, Object 생성자 함수 호출과 객체 리터럴의 평가는 추상 연산 OrdinaryObjectCreate를 호출하여 빈 객체를 생성하는 점에서는 동일
@@ -292,7 +292,7 @@
 
 - 리터럴 표기법에 의해 생성된 객체의 생성자 함수와 프로토타입
 
-  - ![image-20220616220644748](C:\Users\na_0_i\AppData\Roaming\Typora\typora-user-images\image-20220616220644748.png)
+  - ![image](https://user-images.githubusercontent.com/77482972/174081569-051e833d-7015-4c44-8a7c-da4f34b72298.png)
 
 #### 프로토타입의 생성 시점
 
