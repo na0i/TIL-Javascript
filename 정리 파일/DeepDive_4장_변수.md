@@ -15,6 +15,8 @@
 1. 선언 단계: 변수 이름을 등록
 2. 초기화 단계: 값을 저장하기 위한 메모리 공간 확보, 암묵적으로 undefined를 할당해 초기화
 
+![image](https://user-images.githubusercontent.com/77482972/174205174-bbbbd31c-869a-4c47-8986-ff1e548cc9b1.png)
+
 <br>
 
 - 변수 선언은 runtime이 아니라 그 이전 단계에서 먼저 실행됨
