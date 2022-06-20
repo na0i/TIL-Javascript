@@ -1,7 +1,7 @@
 ## 19장 프로토타입
 
 - 자바스크립트는 프로토타입 기반의 객체지향 프로그래밍 언어
-- 자바스크립트는 객체 기반의 프로그래밍 언어이며 자바스크립트를 이루고 있는 거의 모든 것이 객체다.(원시 타입 값 제외한 나머지 값들(함수, 배열, 정규 표현식 등) 모두 객체)
+- 자바스크립트는 객체 기반의 프로그래밍 언어이며 자바스크립트를 이루고 있는 거의 모든 것이 객체다.(원시 타입 값 제외한 나머지 값들(함수, 배열, 정규 표현식 등 모두 객체)
 
 <br>
 
@@ -225,6 +225,8 @@
 
   - ![image](https://user-images.githubusercontent.com/77482972/174067379-e11d4d0c-d5f9-4cb5-a8ab-054cc523e77e.png)
 
+<br>
+
 #### 리터럴 표기법에 의해 생성된 객체의 생성자 함수와 프로토타입
 
 - 리터럴 표기법에 의한 객체 생성 방식과 같이 명시적으로 new 연산자와 함께 생성자 함수를 호출해 인스턴스를 생성하지 않는 객체 생성 방식도 있다.
@@ -294,6 +296,8 @@
 
   - ![image](https://user-images.githubusercontent.com/77482972/174081569-051e833d-7015-4c44-8a7c-da4f34b72298.png)
 
+<br>
+
 #### 프로토타입의 생성 시점
 
 - 모든 객체는 생성자 함수와 연결되어 있다(리터럴 표기법에 의해 생성된 객체도 생성자 함수와 연결되어 있음)
@@ -319,7 +323,7 @@
       // 이 때 프로토타입도 더불어 생성
       
       
-      function Person2(name) {
+      function Person2 = name => {
           this.name = name;
       }
       
@@ -328,17 +332,474 @@
       // 프로토타입이 생성되지 않는다.
       ```
 
-    - 프로토타입도 객체이고 모든 객체는 프로토타입을 가지므로 프로토타입도 자신의 프로토타입을 갖는다.
+    - Person1 함수로 생성된 프로토타입은 오직 constructor 프로퍼티만을 갖는 객체이다.
 
-    - 생성된 프로토타입의 프로토타입은 Object.prototype 이다.
-
-    - 즉, 사용자 정의 생성자 함수는 자신이 평가되어 함수 객체로 생성되는 시점에 프로토타입도 더불어 생성되며, 생성된 프로토타입의 프로토타입은 언제나 Object.prototype이다.
+      - 프로토타입도 객체이고 모든 객체는 프로토타입을 가지므로 프로토타입도 자신의 프로토타입을 갖기 때문에
+      - 생성된 프로토타입의 프로토타입은 Object.prototype 이다.
+      - 즉, **사용자 정의 생성자 함수는 자신이 평가되어 함수 객체로 생성되는 시점에 프로토타입도 더불어 생성되며, 생성된 프로토타입의 프로토타입은 언제나 Object.prototype**이다.
 
   - 자바스크립트가 기본 제공하는 빌트인 생성자 함수
 
     - 빌트인 생성자 함수도 일반 함수와 마찬가지로 빌트인 생성자 함수가 생성되는 시점에 프로토타입이 생성된다.
+    
     - 모든 빌트인 생성자 함수는 전역 객체가 생성되는 시점에 생성된다.
+    
     - 생성된 프로토타입은 빌트인 생성자 함수의 prototype 프로퍼티에 바인딩된다.
+    
+    - 이후 생성자 함수 또는 리터럴 표기법으로 객체를 생성하면 프로토타입은 생성된 객체의 [[ Prototype ]] 내부 슬롯에 할당된다.
+    
+      > 빌트인 생성자 함수는 전역 객체가 생성되는 시점에 생성되고 이와 동시에 프로토타입도 생성된다. 이 프로토타입은 생성자 함수의 prototype 프로퍼티에 바인딩 된다. 그 후 객체가 생성될 때 프로토타입은 생성된 객체의 [[ Prototype ]] 내부 슬롯에 할당된다.
+
+<br>
+
+#### 객체 생성 방식과 프로토타입의 결정
+
+- 객체는 다양한 생성 방법이 있고 각 방식마다 세부적인 객체 생성 방식의 차이는 있으나
+
+- 추상 연산 `OrdinaryObjectCreate`에 의해 생성된다는 공통점이 있다.
+
+  - OrdinaryObjectCreate
+    - 필수적으로 자신이 생성할 객체의 프로토타입을 인수로 전달받음
+    - 자신이 생성할 객체에 추가할 프로퍼티 목록을 옵션으로 전달할 수 있다.
+    - 빈 객체를 생성 → 객체에 추가할 프로퍼티 목록이 인수로 전달된 경우 프로퍼티를 객체에 추가 → 인수로 전달받은 프로토타입을 자신이 생성한 객체의 [[ Prototype ]] 내부 슬롯에 할당 → 생성한 객체를 반환
+
+- 객체 리터럴에 의해 생성된 객체의 프로토타입
+
+  - 자바스크립트 엔진은 객체 리터럴을 평가해 객체를 생성할 때 OrdinaryObjectCreate를 호출 → 이 때 OrdinaryObjectCreate에 전달되는 프로토타입은 Object.prototype이다.
+
+  - 객체 리터럴이 평가되면 OrdinaryObjectCreate에 의해 Object 생성자 함수와 Object.prototype과 생성된 객체 사이에 연결이 만들어짐
+
+  - ```javascript
+    const obj = {x : 1};
+    
+    console.log(obj.constructor === Object); // true
+    console.log(obj.hasOwnProperty('x')); // true
+    
+    // obj 객체는 constructor 프로퍼티와 hasOwnProperty 메서드 등을 소유하지 않지만
+    // Object.prototype 객체를 상속받았기 때문에
+    // 자신의 프로토타입인 Object.prototype의 constructor 프로퍼티와 hasOwnProperty 메서드를 자유롭게 사용 가능
+    ```
+
+- Object 생성자 함수에 의해 생성된 객체의 프로토타입
+
+  - Object 생성자 함수를 인수 없이 호출하면 빈 객체가 생성
+
+  - Object 생성자 함수를 호출하면 객체 리터럴과 마찬가지로 OrdinaryObjectCreate가 호출된다.
+
+  - 이 때, OrdinaryObjectCreate에 전달되는 프로토타입은 Object.prototype
+
+  - 즉, Object 생성자 함수에 의해 생성되는 객체의 프로토타입은 Object.prototype
+
+  - OrdinaryObjectCreate에 의해 Object 생성자 함수와 Object.prototype과 생성된 객체 사이에 연결이 만들어짐
+
+  - 객체 리터럴에 의해 생성된 객체와 동일한 구조를 갖는다.
+
+  - ```javascript
+    const obj = new Object();
+    obj.x = 1;
+    
+    console.log(obj.constructor === Object); // true
+    console.log(obj.hasOwnProperty('x')); // true
+    ```
+
+  - 객체 리터럴과 Object 생성자 함수에 의한 객체 생성 방식의 차이
+
+    - 프로퍼티 추가 방식이 다름
+    - 객체 리터럴 → 객체 리터럴 내부에 프로퍼티 추가
+    - Object 생성자 함수 → 일단 빈 객체를 생성한 후 프로퍼티 추가
+
+- 생성자 함수에 의해 생성된 객체의 프로토타입
+
+  - new 연산자와 함께 생성자 함수를 호출해 인스턴스를 생성하면 마찬가지로 OrdinaryObjectCreate가 호출된다.
+
+  - 이 때, OrdinaryObjectCreate에 전달되는 프로토타입은 생성자 함수의 prototype 프로퍼티에 바인딩되어 있는 객체
+
+  - 즉, 생성자 함수에 의해 생성되는 객체의 프로토타입은 생성자 함수의 prototype 프로퍼티에 바인딩되어 있는 객체
+
+  - ```javascript
+    function Person(name) {
+        this.name = name;
+    }
+    
+    const me = new Person('Lee');
+    
+    // Person.prototype의 프로퍼티는 constructor 뿐이다.
+    ```
+
+- ![image](https://user-images.githubusercontent.com/77482972/174530200-eccd2f04-2624-4aac-8b3d-1b2637e76704.png)
+
+- ![image](https://user-images.githubusercontent.com/77482972/174530470-c9ca15d8-bc02-4069-bdfc-31adfcb0db26.png)
+
+<br>
+
+#### 프로토타입 체인
+
+- ```javascript
+  function Person(name) {
+      this.name = name;
+  }
+  
+  Person.prototype.sayHello = function () {
+      console.log(`Hi! My name is ${this.name}`);
+  }
+  
+  const me = new Person('Lee');
+  
+  console.log(me.hasOwnProperty('name')); // true
+  
+  // me 객체는 Object.prototype의 메서드인 hasOwnProperty를 호출 가능
+  // me 객체가 Person.prototype 뿐만 아니라 Object.prototype도 상속받았다는 것을 의미
+  ```
+  
+- ```javascript
+  Object.getPrototypeOf(me) === Person.prototype; // true
+  Object.getPrototypeOf(Person.prototype) === Object.prototype; // ture
+  ```
+
+- 프로토타입의 프로토타입은 언제나 Object.prototype
+
+- ![image](https://user-images.githubusercontent.com/77482972/174531707-9c91d220-64ed-4c91-b60f-98fc5004c6e6.png)
+
+- 자바스크립트는 객체의 프로퍼티에 접근하려고 할 때 해당 객체에 접근하려는 프로퍼티가 없다면 **[[ Prototype ]] 내부 슬롯의 참조를 따라 자신의 부모 역할을 하는 프로토타입의 프로퍼티를 순차적으로 검색 : 프로토타입 체인**
+
+- 프로토타입 체인은 자바스크립트가 객체지향 프로그래밍의 상속을 구현하는 메커니즘
+
+- ```javascript
+  me.hasOwnProperty('name');
+  ```
+
+  1. 먼저 hasOwnProperty 메서드를 호출한 me 객체에서 hasOwnProperty 메서드를 검색
+  2. 없을 경우, 프로토타입 체인을 따라, [[ Prototype ]] 내부 슬롯에 바인딩되어 있는 프로토타입으로 이동해 hasOwnProperty 메서드를 검색
+  3. Person.prototype에도 hasOwnProperty가 없으므로 프로토타입 체인을 따라 Object.prototype으로 이동해 hasOwnProperty 메서드를 검색
+  4. Object.prototype에는 hasOwnProperty 메서드 존재
+  5. 이 때, Object.prototype.hasOwnProperty 메서드의 this에는 me 객체 바인딩(this로 사용할 me 객체를 전달하며 Object.prototype.hasOwnProperty 메서드를 호출한다고 이해한다)
+
+- 프로토타입 체인의 최상단에 위치하는 객체는 언제나 Object.prototype
+
+- 따라서, 모든 객체는 Object.prototype을 상속받는다.
+
+- **Object.prototype을 프로토타입 체인의 종점**이라 한다.
+
+- Object.prototype의 프로토타입, 즉 [[ Prototype ]]의 내부 슬롯 값은 null
+
+- 프로토타입 체인 종점인 Object.prototype에서도 프로퍼티를 검색할 수 없는 경우 undefined 반환
+
+- **프로토타입 체인은 상속과 프로퍼티 검색을 위한 메커니즘**
+
+- 스코프 체인과 프로토타입 체인은 서로 협력하여 식별자와 프로퍼티를 검색하는데 사용된다.
+
+<br>
+
+#### 오버라이딩과 프로퍼티 섀도잉
+
+- ```javascript
+  const Person = (function () {
+    function Person(name) {
+      this.name = name;
+    }
+  
+    Person.prototype.sayHello = function () {
+      console.log(`${this.name} 프로토타입`);
+    };
+  
+    return Person;
+  })();
+  
+  const me = new Person("Lee");
+  
+  me.sayHello = function () {
+    console.log(`${this.name} 인스턴스`);
+  };
+  
+  me.sayHello(); // Lee 인스턴스
+  ```
+
+- 프로토타입이 소유한 프로퍼티를 프로토타입 프로퍼티 / 인스턴스가 소유한 프로퍼티를 인스턴스 프로퍼티
+
+- 프로토타입 프로퍼티와 동일한 프로퍼티를 인스턴스에 추가하면 프로토타입 프로퍼티를 덮어쓰는 게 아니라 인스턴스 프로퍼티로 추가
+
+- 인스턴스 메서드 sayHello는 프로토타입 메서드 sayHello를 오버라이딩
+
+- 프로토타입 메서드 sayHello는 가려짐 = 프로퍼티 섀도잉
+
+- 프로퍼티를 삭제하는 경우도 마찬가지
+
+  - 인스턴스 메서드 sayHello를 삭제할 경우 프로토타입 메서드가 아닌 인스턴스 메서드가 삭제
+  - 하위 객체를 통해 프로토타입의 프로퍼티를 변경 또는 삭제하는 것은 불가능
+
+- 하위 객체를 통해 프로토타입에 get 액세스는 허용되나 set 액세스는 허용되지 않는다.
+
+<br>
+
+#### 프로토타입의 교체
+
+- 프로토타입은 임의의 다른 객체로 변경 가능 = 부모 객체인 프로토타입을 동적으로 변경 가능하다.
+
+- 객체 간의 상속 관계 동적 변경 가능
+
+- 생성자 함수에 의한 프로토타입의 교체
+
+  - ```javascript
+    const Person(function () {
+        function Person(name) {
+            this.name = name;
+        }
+        
+        // Person.prototype에 객체 리터럴 할당
+        // 객체 리터럴에는 constructor 프로퍼티가 없음
+        // 따라서 me 객체의 생성자 함수를 검색하면 Person이 아닌 Object가 나온다. 
+        Person.prototype = {
+            sayHello() {
+                console.log('안녕')
+            }
+        };
+        
+        return Person;
+    }());
+    
+    const me = new Person('LEE');
+    
+    console.log(me.constructor === Person); // false
+    console.log(me.constructor === Object); // true
+    // 프로토타입의 교체로 constructor 프로퍼티와 생성자 함수 간의 연결이 파괴
+    
+    
+    //// ------------------ constructor 프로퍼티 되살리기 ------------------ ////
+    const Person(function () {
+        function Person(name) {
+            this.name = name;
+        }
+        
+        // Person.prototype에 객체 리터럴 할당
+        // 객체 리터럴에는 constructor 프로퍼티가 없음
+        // 따라서 me 객체의 생성자 함수를 검색하면 Person이 아닌 Object가 나온다. 
+        Person.prototype = {
+            constructor: Person,
+            sayHello() {
+                console.log('안녕')
+            }
+        };
+        
+        return Person;
+    }());
+    
+    const me = new Person('LEE');
+    
+    console.log(me.constructor === Person); // true
+    console.log(me.constructor === Object); // false
+    ```
+
+  - 생성자 함수의 prototype 프로퍼티에 다른 임의의 객체를 바인딩하는 것은 미래에 생성할 인스턴스의 프로토타입을 교체하는 것
+
+- 인스턴스에 의한 프로토타입의 교체
+
+  - 프로토타입은 생성자 함수의 prototype 프로퍼티 뿐만 아니라 인스턴스의 __ proto __ 접근자 프로퍼티를 통해 접근 가능(Object.getPrototypeOf도 가능)
+
+  - 따라서, __ proto __ 또는 Object.setPrototypeOf를 통해 프로토타입 교체 가능
+
+  - __ proto __ 접근자 프로퍼티를 통해 프로토타입을 교체하는 것은 이미 생성된 객체의 프로토타입을 교체하는 것
+
+  - ```javascript
+    function Person(name) {
+        this.name = name;
+    }
+    
+    const me = new Person('Lee');
+    
+    const parent = {
+        sayHello() {
+            console.log('안녕');
+        }
+    };
+    
+    Object.setPrototypeOf(me, parent);
+    // me.__proto__ = parent; (위 아래 코드 동일하게 동작함)
+    
+    me.sayHello(); // 안녕
+    
+    // 생성자 함수에 의한 프로토타입의 교체와 마찬가지로
+    // 프로토타입으로 교체한 객체에 constructor 프로퍼티가 없으므로 constructor 프로퍼티와 생성자 함수 간의 연결이 파괴됨
+    console.log(me.constructor === Person); // false
+    console.log(me.constructor === Object); // true
+    ```
+
+- 생성자 함수에 의한 프로토타입 교체 vs 인스턴스에 의한 프로토타입 교체
+
+  ![image](https://user-images.githubusercontent.com/77482972/174558919-fab8fea0-7968-47c7-a450-1b9a7d92349f.png)
+
+- 프로토타입은 직접 교체하지 않는 것이 좋다.
+
+<br>
+
+#### instanceof
+
+- 이항 연산자
+
+- 좌변에 객체를 가리키는 식별자 / 우변에 생성자 함수를 가리키는 식별자
+
+- 우변의 생성자 함수의 prototype에 바인딩된 객체가 좌변의 객체의 프로토타입 체인 상에 존재하면 true로 평가 / 그렇지 않을 경우 false로 평가
+
+- ```javascript
+  function Person(name) {
+      this.name = name;
+  }
+  
+  const me = new Person('Lee');
+  
+  const parent = {};
+  
+  Object.setPrototypeOf(me, parent);
+  
+  console.log(me instanceof Person); // false
+  console.log(me instanceof Object); // true
+  
+  // me 객체는 프로토타입이 교체되어 프로토타입과 생성자 함수 간의 연결이 파괴되었다.
+  // Person.prototype이 me 객체의 프로토타입 체인 상에 존재하지 않는다.
+  ```
+
+- ```javascript
+  function Person(name) {
+      this.name = name;
+  }
+  
+  const me = new Person('Lee');
+  
+  const parent = {};
+  
+  Object.setPrototypeOf(me, parent);
+  
+  console.log(me instanceof Person); // false
+  console.log(me instanceof Object); // true
+  
+  Person.prototype = parent;
+  
+  console.log(me instanceof Person); // true
+  console.log(me instanceof Object); // true
+  ```
+
+- instanceof 연산자는 프로토타입의 constructor 프로퍼티가 가리키는 생성자 함수를 찾는 것이 아니라
+
+- 생성자 함수의 prototype에 바인딩된 객체가 프로토타입 체인 상에 존재하는지 확인
+
+- ```javascript
+  const Person = (function(){
+      function Person(name) {
+      	this.name = name;
+      }
+      
+      Person.prototype = {
+          sayHello() {
+              console.log('안녕');
+          }
+      };
+  }());
+  
+  const me = new Person('Lee');
+  
+  const parent = {};
+  
+  Object.setPrototypeOf(me, parent);
+  
+  console.log(me instanceof Person); // true
+  console.log(me instanceof Object); // true
+  ```
+
+<br>
+
+#### 직접 상속
+
+- Object.create에 의한 직접 상속
+  - 명시적으로 프로토타입을 지정하여 새로운 객체를 생성
+  - OrdinaryObjectCreate를 호출
+  - 첫번째 매개변수에는 생성할 객체의 프로토타입으로 지정할 객체를 전달
+  - 두번째 매개변수에는 생성할 객체의 프로퍼티 키와 프로퍼티 디스크립터 객체로 이뤄진 객체를 전달(옵션)
+  - new 연산자 없이도 객체 생성 가능
+  - 프로토타입을 지정하면서 객체 생성 가능
+  - 객체 리터럴에 의해 생성된 객체도 상속 가능 
+
+- 객체 리터럴 내부에서 __ proto __ 에 의한 직접 상속
+  - 일단 객체를 생성한 이후 프로퍼티를 추가하는 방법
+
+<br>
+
+#### 정적 프로퍼티 / 메서드
+
+- 생성자 함수로 인스턴스를 생성하지 않아도 참조/호출할 수 있는 프로퍼티/메서드
+- 생성자 함수는 객체이므로 자신의 프로퍼티/메서드를 소유할 수 있고, 생성자 함수 객체가 소유한 프로퍼티/메서드를 정적 프로퍼티/메서드 라고 한다.
+- 정적 프로퍼티/메서드는 생성자 함수가 생성한 인스턴스로 참조/호출 불가능
+- ![image](https://user-images.githubusercontent.com/77482972/174566677-19cc5d8c-6f3e-4ddf-8abc-0c27a12f8821.png)
+- Object.create 메서드는 Object 생성자 함수의 정적 메서드 → Object가 생성한 객체(인스턴스)가 호출할 수 없다.
+- Object.prototype.hasOwnProperty 메서드는 Object.prototype의 메서드 → 모든 객체가 호출 가능(모든 객체 프로토타입 체인의 종점)
+
+<br>
+
+#### 프로퍼티 존재 확인
+
+- in 연산자
+
+  - 객체 내에 특정 프로퍼티가 존재하는지 여부를 확인
+
+  - `key in object`의 형태
+
+  - in 연산자는 확인 대상 객체의 프로퍼티뿐만 아니라 상속받은 모든 프로토타입의 프로퍼티를 확인하므로 주의가 필요
+
+  - `Reflect.has`와 동일
+
+  - ```javascript
+    const person = {
+    	name: 'Lee',
+    }
+    
+    console.log('name' in person); // true
+    console.log('toString' in person); // true
+    ```
+
+- Object.prototype.hasOwnProperty 메서드
+
+  - 상속받은 프로토타입의 프로퍼티 키인 경우 false 반환
+
+<br>
+
+#### 프로퍼티 열거
+
+- for ... in 문
+
+  - 객체의 모든 프로퍼티를 순회하며 열거
+
+  - `for (변수 선언문 in 객체) {...}`
+
+  - in 연산자와 마찬가지로 상속받은 프로토타입의 프로퍼티까지 열거
+
+  - 하지만 toString과 같은 메서드가 열거되지 않는 이유는 toString 메서드가 열거할 수 없도록 정의되어 있는 프로퍼티이기 때문([[ Enumerable ]] 값이 false이기 때문)
+
+  - 다시 말해, for ...in 문은 객체의 프로토타입 체인 상에 존재하는 모든 프로토타입의 프로퍼티 중에서 프로퍼티 어트리뷰트 [[ Enumerable ]]의 값이 true인 프로퍼티를 순회하며 열거한다. 
+
+  - 프로퍼티를 열거할 때 순서를 보장하지 않음(대부분은 보장하긴 한다.)
+
+  - ```javascript
+    const person = {
+    	name: 'Lee',
+        address: 'Seoul',
+    }
+    
+    for (const key in person) {
+        console.log(key, person[key]);
+    }
+    
+    // name Lee
+    // address Seoul
+    ```
+
+- Object.keys/values/entries 메서드
+
+  - for ... in 문은 객체 자신의 고유 프로퍼티 뿐 아니라 상속받은 프로퍼티도 열거
+  - Object.keys/values/entries 메서드는 객체 자신의 고유 프로퍼티만 열거
+  - Object.keys 메서드
+    - 객체 자신의 열거 가능한 프로퍼티 키를 배열로 반환
+  - Object.values 메서드
+    - 객체 자신의 열거 가능한 프로퍼티 값을 배열로 반환
+  - Object.entries 메서드
+    - 객체 자신의 열거 가능한 프로퍼티 키와 값의 쌍의 배열을 배열에 담아 반환
 
 <br>
 
